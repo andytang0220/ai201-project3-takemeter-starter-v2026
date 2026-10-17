@@ -112,11 +112,10 @@
 
 ### The hardest boundary
 
-**Which two labels:**
+**Which two labels: `spec` and `pitch`**
 
 **The decision rule I used every time:**
-<!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
-     if the tone is heated." -->
+A post is pitch only if it is already a spec and it weighs something other than the idea itself: a downside or side effect of the change, an existing feature presented as a possible answer and explained as falling short, or an interaction with current mechanics. Otherwise it’s spec.
 
 
 
@@ -127,19 +126,19 @@
 <!-- Where you collected from, how you labelled, your counts, and three hard
      cases. -->
 
-**Where the posts came from:**
+**Where the posts came from: r/minecraftsuggestions**
 
-**How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
+**How I labelled them: I first cold labelled 20 by hand, then had Claude label the rest.** <!-- Cold first? Pre-labelled with AI and corrected?
 Say so plainly — the disclosure is required, not penalised. -->
 
 **Counts per label:**
 
 | Label | Count | Share |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-| **Total** |  | 100% |
+| `wish` | 85 | 42.5% |
+| `spec` | 68 | 34.0% |
+| `pitch` | 47 | 23.5% |
+| **Total** | 200 | 100% |
 
 **Three hard cases**
 
@@ -147,25 +146,25 @@ Say so plainly — the disclosure is required, not penalised. -->
      been, and what you chose. These are worth more than the easy 190. -->
 
 **1.**
-> *The post:*
+> *The post:* "Right-clicking a furnace with flint and steel keeps it lit permanently". It's a short cosmetic tweak: the furnace stays lit until broken, and it applies to smokers and blast furnaces too. The author adds, "No, it wouldn't infinitely smelt items, it would purely be cosmetic, you still have to put fuel in like normal."
 >
-> *Could have been:*
+> *Could have been:* `spec` or `pitch`
 >
-> *I chose, because:*
+> *I chose, because:* `pitch`. The post is short, but the behavior is fully pinned down, so it is at least a `spec`. The "no infinite smelting" line heads off an exploit, so it weighs a side effect of the change. Under my rule, that makes it a `pitch`, even though it reads like a one-liner.
 
 **2.**
-> *The post:*
+> *The post:* "Increase the cushion health". Cushions take many steps to set up and break when you misclick, so "the cushion should need at least 3 hits."
 >
-> *Could have been:*
+> *Could have been:* `wish` or `spec`
 >
-> *I chose, because:*
+> *I chose, because:* `wish`. It gives a concrete number, so two readers would picture almost the same thing. But the whole change is one clause ("needs 3 hits"), and my `wish` definition covers a whole change that is one clause. The reasoning is only a motive, so it doesn't push the post any higher.
 
 **3.**
-> *The post:*
+> *The post:* "Ice Mansion - Illager Mansion in the Ice Caves". It describes a rare Woodland-Mansion-like structure in Ice Caves with reskinned illagers. Iceologers replace Evokers, "having a new set of ice-themed moves that makes them just as dangerous as Evokers."
 >
-> *Could have been:*
+> *Could have been:* `wish` or `spec`
 >
-> *I chose, because:*
+> *I chose, because:* `spec`. Most of the post is defined by reference to an existing structure (same shape, same loot, same illagers apart from clothing), so readers would picture the same thing. The Iceologer's moves are never described, which pulls it toward `wish`. Still, that is one missing detail, not the core behavior.
 
 ---
 
@@ -173,15 +172,28 @@ Say so plainly — the disclosure is required, not penalised. -->
 
 <!-- Your starting model, your settings, and anything you changed and why. -->
 
-**Base model:**
+**Base model:** `distilbert-base-uncased`
 
 **Settings:** <!-- epochs, learning rate, batch size, seed -->
+3 epochs, learning rate 2e-5, batch size 16, max length 128 tokens, seed 42. Trained on CPU (torch 2.14.1+cpu).
 
 **Anything I changed from the defaults, and why:**
+Nothing. I kept every default so the first run is a clean baseline to compare later changes against.
+
+One default is worth flagging: `MAX_LENGTH = 128`. My posts are long, and 128 of the 200 (64%) run past 128 tokens and get truncated. That includes 58 of 68 `spec` posts and 38 of 47 `pitch` posts, but only 32 of 85 `wish` posts. The part that makes a post a `pitch` (a downside, a balance concern, or an interaction with existing mechanics) usually comes after the mechanics are described. So it is often in the part the model never sees, which fits `pitch` scoring 0 F1 on this run.
 
 **Split sizes:** <!-- train / val / test, and per-label counts in the test
 split. If a label had fewer than about 8 in test, say so — it explains a lot
 of next unit's variance. -->
+Stratified 70/15/15 split with seed 42: **train 139 · val 31 · test 30**.
+
+| Label | Train | Val | Test |
+|---|---|---|---|
+| `wish` | 59 | 13 | 13 |
+| `spec` | 47 | 11 | 10 |
+| `pitch` | 33 | 7 | 7 |
+
+`pitch` has only **7** examples in the test split (under 8), so its F1 will swing a lot between seeds. On this run the model predicted `pitch` zero times. All 7 `pitch` posts and 6 of 10 `spec` posts were called `wish`, which gives 0.567 accuracy and 0.413 macro F1 (`results.json`).
 
 
 
@@ -198,17 +210,17 @@ of next unit's variance. -->
 
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for: Evaluation of my 3 proposed labels, problem, wish, spec*
+- *What came back: A preliminary evaluation of the subreddit and noting that problem type posts were actually not that common.*
+- *What I changed: Removal of the problem label and addition of the pitch label.*
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for: Help scraping posts off of the subreddit and labelling.*
+- *What came back: Mostly correct labels, but some one off posts that needed correcting*
+- *What I changed: Corrected post labels, noted in `labels.csv`*
 
-**Pre-labelling disclosure:**
+**Pre-labelling disclosure: I hand-labelled 20 posts, then asked Claude to scrape and label the rest, after which I reviewed them.**
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
