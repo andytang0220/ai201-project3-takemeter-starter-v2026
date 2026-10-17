@@ -53,60 +53,50 @@ whether you hit them:
 
 ## 1.
 
-<!-- Your criterion. It must name a number. -->
-
-
+Overall accuracy is at least 0.70, and at least 15 points above the majority-class baseline.
 
 **Why this target:**
-
+Fewer labels means fewer ways to be wrong, so the target goes up from 0.65. It doesn’t go much higher, because the spec/pitch boundary still took several rounds of rules to settle and the model will miss some of those calls. If wish turns out to be 55% of the data, 15 points above baseline lands exactly at 0.70, so the two conditions agree.
 
 
 ---
 
 ## 2.
 
-<!-- Your criterion. -->
-
-
+Fewer than 5% of predictions confuse wish and pitch.
 
 **Why this target:**
-
+On a three-step ladder, that’s the only error that skips a step. Mixing up wish and spec or spec and pitch matches where your own hard cases were. Calling a vague one-liner a pitch, or a fully argued design a wish, means the model learned something other than your criteria, most likely length.
 
 
 ---
 
 ## 3.
 
-<!-- Your criterion. -->
-
-
+Every label has an F1 of at least 0.50.
 
 **Why this target:**
-
+The floor rises from 0.45 because with three labels each one gets a larger share of the data and fewer competitors. pitch is still the smallest and sits on the hardest boundary, so the floor stays low enough for it to clear realistically. Below 0.50, the model is close to guessing on that label.
 
 
 ---
 
 ## 4.
 
-<!-- Your criterion. -->
-
-
+Each label is at least 15% of the 200 posts (30 examples), and none is over 55%.
 
 **Why this target:**
-
+With three labels, a stratified test set of 40–50 posts would then contain at least 6–7 of each, which is still small but enough to see whether a label is working at all. If pitch comes in under 30 after your first pass, add posts sorted by Top until it clears. The 55% cap keeps the majority baseline from making criterion 1 unreachable.
 
 
 ---
 
 ## 5.
 
-<!-- Your criterion. -->
-
-
+Relabeling 40 random posts a week later, without looking at your first labels, matches at least 85% of the time.
 
 **Why this target:**
-
+This doesn’t change with the label count. A model can’t be more consistent than its training labels, and if you agree with yourself less than 85% of the time, a 0.70 model is near the ceiling and the problem lies in the rules, not the model.
 
 
 ---
