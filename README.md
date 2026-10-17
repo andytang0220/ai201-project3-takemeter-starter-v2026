@@ -54,25 +54,61 @@
      The decision rule is worth a point on its own and it's the thing most
      people leave out. Every taxonomy has a hardest boundary. Name yours. -->
 
-### `label_one`
+### `wish`
 
-**Definition:**
+**Definition: Proposes a specific change but leaves how it works up to the reader. The core behavior is missing, offered as options or guesses (“maybe crafted from…?”), or the whole change is one clause.**
 
-**Example 1:**
->
+**Example 1: Have ice bricks & variants be slippery like packed ice**
+>They're crafted directly from packed ice. I'd understand if there was, like, cobblestone mixed in, but it's just ice. Why do they not preserve the lower friction?
 
-**Example 2:**
->
+**Example 2: A new structure with mobs would be awesome in the snow biomes!**
+>I’m silently holding out hope that this new drop will include an ice structure of some kind that spawns in snow biomes made from the ice bricks mixed with other blocks. Pillagers could spawn in this structure as an outpost-type structure and it would be a great way to bring in the Iceologer.
+>The new snapshot promo from Minecraft’s Twitter has hyped me up with this idea. Give me your thoughts and opinions!
 
-### `label_two`
+### `spec`
 
-**Definition:**
+**Definition: Describes how the proposed thing works concretely enough that two readers would picture the same feature, but gives no reasoning beyond a motive.**
 
-**Example 1:**
->
+**Example 1: Ash blocks and lye**
+>The idea is you burn a flammable block, and instead of disappearing it’s replaced with an ash block, which you can then put in a sulfur geyser to make lye.
+>Lye would be used as a damaging water that doesn’t hurt you as much as lava, but also allows you to boat on it, as well as not destroying items you throw in it, making it perfect for trap moats and defense. Brittle ice would break faster in it, packed ice would melt, ice would melt faster, and blue ice would convert it back to water. But it’d also clean copper and any other “oxidizables” they may or may not add later on
 
-**Example 2:**
->
+**Example 2: Phantom Reworks**
+>Idea for how phantoms should work:
+>Preface
+>The phantom should spawn at night ALWAYS, but it's behavior depends on if a player nearby (within 8 chunks maybe?) has slept
+>With Sleeping
+>When a player has slept, phantoms should not attack the player unless attacked, and during the day they should become become more and more translucent until they despawn (maybe like 8 seconds of disappearing) entirely without dropping anything. They can be killed, but it should be hard to reach or hit them, with them very slightly trying to avoid players, but not that much, and they try to remain at maybe around y=200. There should be a limit of around 3 per 20 chunks, with the same despawning applying if the limit exceeds.
+>Without Sleeping
+>When a player has not slept for a minimum of 3 days, the phantom gets hostile, gaining hostility as the nights go on. They should die during the day always. With 3 days, it should try to remain at around y=175, and should swoop down every maybe 30 seconds? Dealing 2 damage. Next hostility could be 6 days, where they try to remain at around 150, and swoop every ~12 seconds, dealing 4 damage. Next and final hostility should be ~12 days, with them remaining at around 100, swooping every 4 seconds, and dealing 12 damage.
+>These values should be changed to better suit balancing, I just made them up because I can't play Minecraft or create this as a mod for the next few days. Give suggestions please!! Also this was not generated with an llm don't accuse me of that
+
+### `pitch`
+
+**Definition: A spec that also engages with at least one consequence: a downside or balance concern, why an existing feature doesn’t already solve the problem, or how it interacts with existing mechanics.**
+
+**Example 1: Ice Caves Rework**
+>The new Ice Caves are super cool (no pun intended), but with so many hostile features to survival players, it’s hard to understand the trade off for this biome.
+>The Frostbite zombies can freeze you and have ranged Ice ball attacks. Lighting up the caves causes ice to melt which makes ice spikes fall on you. And now with the brittle ice that upon stepping on, one can fall a significant distance. They also may add the Iceologer which would make the biome even more dangerous.
+>So what’s the point of even going here besides collecting ice-type resources? Sure, ores are easier to see, but literally anywhere else would be less hostile.
+>I’m going to recommend the Ice Caves get a significant buff in the form of ore spawn rates. Specifically, I think a proper tradeoff could be increased Diamond spawn rates. Similarly to how Gold spawns more in Mesas, Diamonds could spawn more (and higher up) in Ice Caves.
+>With great risk should come great reward, and diamonds already are hard to find with no renewable way to obtain them— so having them spawn more in this biome would give survival players a locale to specifically look for them. It also obviously gives players more of an incentive to engage with the new biome.
+>This part is superfluous: but also diamonds match the “color scheme” for the ice caves. And yeah I know that diamonds realistically should spawn in “hotter” areas but like when has Minecraft ever cared about geological realism haha.
+
+
+**Example 2: Make all equipment upgradeable to higher tiers**
+>Mojang has said before that they consider impermanence to be important as part of the game design. They clearly want the player to not keep armor around and to be ok with letting it break, then build new sets and get different enchantments. That would be why mending is so hard to come by, and also why the enchanting table largely has random rolls, plus why you practically have to build an XP farm to repair things with the anvil.
+>But in practice, we all know that isn't how things go. The player quickly discards iron armor for diamond, then keeps the diamond around for netherite upgrades since netherite is rare and expensive. After getting netherite, the player is heavily incentivized to grind for mending despite its rarity, because of the aforementioned difficulty involved in collecting more netherite for repairs. Because of the difficulty involved in netherite upgrades, as well as the requirement of having certain tiers of tools to collect certain resources, this game design decision actually incentivizes keeping an end-game tool around forever and also encourages hoarding enchantments for this end game gear. It also leads to the thoughtless discarding of old equipment as well as largely perceiving many loot chest tools as being total trash. After all, why would you wanna pick up a gold pickaxe or a stone axe unless you were just starting?
+>So, how do we resolve this problem? Simple. The game design needs to change in a way that allows easier upgradeability. If it is easier and cheaper to get ahold of better tools, especially if it utilizes old ones, the player would have an easier time with the idea of letting better tools break. Importantly, this design change would allow players to keep a set of armor, weapons and tools, but also ensure that it is not as big of a deal to lose them.
+>The biggest change I would make on this front is the ability to upgrade tools from their current tiers into higher ones. Although the player could still, for instance, craft a diamond pickaxe outright, they could instead play more resourcefully and use 1 diamond to upgrade an iron pickaxe to diamond, carrying over enchantments and repairing it. This would ensure both that the pickaxe doesn't get discarded to a random chest or smelted for 1 iron nugget, while also making sure that it isn't a tragedy to lose a diamond pickaxe. After all, iron is significantly more common and you are much more likely to have a double chest full of it than diamonds. Being 1 diamond away instead of 3 would be a huge incentive to not worry about preserving it.
+>On top of that, I am in favor of nixing the XP cost for repairing your equipment. While in Mojang's original game design this served as a way to dissuade players from keeping equipment around, the upgrade system serves as a far larger incentive. As a result, since the player is no longer as concerned with permanence, this artificial barrier can be safely removed. XP already has enough use for enchanting.
+>To resolve the netherite problem, I think an overhaul in how the player acquires it is in order. Ancient debris mining is actually insane. Strip mining is largely the only way to get ahold of large quantities, and yet Jeb said lava pockets were added to dissuade it. Like, what? Is the player supposed to spend 100 hours wandering aimlessly in the nether to find debris and scraps in bastions, and then have to keep doing that further and further out in order to build new sets? I honestly have no idea what they were thinking with this game design choice, and so I am nixing lava pockets and also overhauling debris. Now, debris drops scrap when mined, and it is affected by fortune. If the player wants to collect debris, they have to use silk touch. This has the additional interesting choice of collecting debris in order to save it for when the player gets a fortune roll from the enchanting table or a book.
+>The game should also give the player more avenues for collecting debris or netherite. They could be an extremely rare trade with piglins for example, and their generation could be changed to be in line with overworld mining, ie, it generates more often with the flow of nether generation and less in a way that requires strip mining. If it was changed in the overworld because strip mining isn't very fun, it should also change in the nether.
+>Additionally, less scrap is now required to make netherite, and if you have golden armor, you can skip the gold-fusing part of the crafting recipe. May as well make gold more useful, seeing as it is almost entirely worthless currently beyond preventing piglin aggro.
+>Alongside these changes, I think it is only fair to be able to get more materials out of armor and tools when smelting them. After all, if Mojang wants these things to be impermanent, you should be able to get more out of discarded sets. Otherwise, the game design feeds back into rewarding keeping a set forever. Durability determines how many ingots or nuggets you get out of smelted tools, weapons, and armor now, and you can also use books to pull good enchantments off of equipment to use for later. This has the additional perk of encouraging players to pick up equipment that otherwise is usually considered useless from loot chests. That golden pickaxe is now at least a couple gold ingots and a good enchanting book away!
+>I think some other conceptual changes that might help would be more conditional/environmental hazards that require the player to have multiple armor sets for different purposes. Make sure to have leather armor when exploring around powdered snow, to prevent cold damage. Avoid outright metal armor in the nether, because it is hot and metal is conductive. Copper armor could attract lightning or power redstone contraptions. Maybe they could even add a progression fork that allows for either netherite or something else, perhaps from the Sift. This would allow for more customization as well as more choices in how you tackle the sandbox, and would also encourage crafting armo sets the player normally wouldn't.
+>I would also consider adding netherite upgrades for more items (ie, the trident, the mace, the bow, golden apples, etc), which would give the player more incentives to get ahold of a lot.
+>I think it also may be worth weakening the shield and adding shield tiers instead that increase its durability and decrease the block cooldown.
 
 ### The hardest boundary
 
