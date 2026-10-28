@@ -236,19 +236,17 @@ Stratified 70/15/15 split with seed 42: **train 139 · val 31 · test 30**.
 
 | Measure | Baseline | Trained | Difference |
 |---|---|---|---|
-| Overall accuracy |  |  |  |
-| Macro F1 |  |  |  |
-| F1 — `label_one` |  |  |  |
-| F1 — `label_two` |  |  |  |
+| Overall accuracy | 0.200 | 0.567 | +0.367 |
+| Macro F1 | 0.111 | 0.413 | +0.302 |
+| F1 — `pitch` | 0.333 | 0.000 | -0.333 |
+| F1 — `spec` | 0.000 | 0.571 | +0.571 |
+| F1 — `wish` | 0.000 | 0.667 | +0.667 |
 
 **What I predicted before I looked:**
-<!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
-     prediction made afterwards isn't one. -->
+I predict that overall accuracy will improve with the trained model.
 
 **What the gap actually means:**
-<!-- If the baseline matched your trained model, your fine-tuning added
-     nothing — and that is a real finding, not a failure. Say it plainly. -->
-
+Fine-tuning beat the baseline (accuracy improved) but the decrease in F1 score for `pitch` indicates that the `spec`/`pitch` boundary is giving the model difficulty.
 
 
 ---
