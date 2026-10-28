@@ -258,27 +258,43 @@ Fine-tuning beat the baseline (accuracy improved) but the decrease in F1 score f
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.70, and ≥ 15 points above majority-class baseline (0.433, always `wish`) | 0.567 (+13.3 pts) | 0.467 (+3.3 pts) | 0.467 (+3.3 pts) | MISSED |
+| 2. `wish`/`pitch` confusion | < 5% of predictions | 7/30 = 23.3% | 7/30 = 23.3% | 6/30 = 20.0% | MISSED |
+| 3. Per-label F1 | every label ≥ 0.50 | `wish` 0.667, `spec` 0.571, `pitch` 0.000 | `wish` 0.619, `spec` 0.182, `pitch` 0.000 | `wish` 0.615, `spec` 0.286, `pitch` 0.000 | MISSED |
+| 4. Balance | each label ≥ 15% (30 posts), none > 55% | `wish` 42.5%, `spec` 34.0%, `pitch` 23.5% | same (data, not seed) | same (data, not seed) | MET |
+| 5. Self-agreement | ≥ 85% on a 40-post relabel | not measured | not measured | not measured | NOT YET MEASURED |
+
+Notes on the verdicts:
+
+- **1:** No seed reaches 0.70, and only seed 42 comes near the baseline margin. Accuracy moved 0.100 across seeds, but even the best seed is 13 points under target.
+- **2:** Every `wish`/`pitch` error went the same way (real `pitch` called `wish`). Seed 2024 also called one `wish` post `spec` and one `pitch` post `spec`, but still has 6 `pitch`→`wish` errors.
+- **3:** `pitch` is 0.000 on all three seeds and `spec` is under 0.50 on two of three, so this misses by a wide margin.
+- **4:** Counts are 85 / 68 / 47 of 200, which does not depend on the seed.
+- **5:** I haven't done the relabel yet, so I'm not claiming a result.
 
 ### Confusion matrix
 
 <!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
      An image of a matrix earns nothing. -->
 
-| true \ predicted |  |  |  |
+| true \ predicted | wish | spec | pitch |
 |---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+| **wish** | 13 | 0 | 0 |
+| **spec** | 6 | 4 | 0 |
+| **pitch** | 7 | 0 | 0 |
+
+Biggest confusion: 7 real `pitch` posts called `wish`.
+The other direction: 0 real `wish` posts called `pitch`.
+
+That's lopsided — the model leans toward `wish` on this pair.
+A direction like that usually points at your labelling rather than the
+model. Your agreement report is the thing that can tell you which.
 
 **My biggest off-diagonal number, and what it means:**
 <!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
      direction. "7 real analysis posts were called hot_take and only 3 went the
      other way" is a direction, not just an error rate. -->
+Matrix is seed 42. 7 real `pitch` posts were called `wish` and 0 real `wish` posts were called `pitch`, so the model never learned to separate `pitch` from `wish` and never predicted `pitch` at all. The next largest cell is 6 real `spec` posts called `wish` (and 0 real `wish` posts called `spec`). On seeds 7 and 2024 the same pattern held: `pitch`→`wish` was 7 and 6, and `spec`→`wish` was 9 and 8. So the model collapses toward the majority label, `wish`, and the `spec`/`pitch` side of the ladder is what it misses. The boundary I called hardest was `spec` vs `pitch`, but the model hasn't yet separated either from `wish`. I can't yet say whether that is a labelling problem or a model problem until I have the agreement report.
 
 
 
@@ -291,11 +307,11 @@ Fine-tuning beat the baseline (accuracy improved) but the decrease in F1 score f
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Overall accuracy | ≥ 0.70 and ≥ 15 points over majority baseline | MISSED | Best seed is 0.567 (+13.3 pts over 0.433); the other two are 0.467 (+3.3 pts). Fails on both conditions on every seed. |
+| 2 | `wish`/`pitch` confusion | < 5% of predictions | MISSED | 23.3%, 23.3%, 20.0%. All of it is real `pitch` called `wish`. |
+| 3 | Per-label F1 | every label ≥ 0.50 | MISSED | `pitch` is 0.000 on all three seeds. `spec` clears 0.50 only on seed 42 (0.571, then 0.182 and 0.286). |
+| 4 | Balance | each ≥ 15%, none > 55% | MET | 42.5% / 34.0% / 23.5%. This is a property of the 200 posts, so it holds on every seed. |
+| 5 | Self-agreement | ≥ 85% on a 40-post relabel | NOT MEASURED | I haven't done the relabel, so I'm not giving a verdict. The staff agreement report is the only consistency evidence I have (see below). |
 
 **Diagnoses**
 
@@ -307,6 +323,22 @@ Fine-tuning beat the baseline (accuracy improved) but the decrease in F1 score f
      ⚠️ Use your agreement report as evidence. It is the only instrument you
      have that can tell a LABELLING problem from a MODEL problem, and this
      section is graded on whether you used it that way. -->
+
+**Evidence from the agreement report.** I agreed with staff on 30 of 30 posts (`agreement_results.json`), so there was nothing to adjudicate. Under a written rule set I didn't write, I applied the rules the way their authors did, including the close calls (for example, a statistic used as decoration on a conclusion already reached is `hot_take`, not `analysis`). That is some evidence that my labelling is consistent, and it points the diagnosis at the data and the model rather than at me applying a rule two different ways. Its limits: it is 30 posts, in a different domain, under rules written with decision tests spelled out; my own 200 were mostly labelled by Claude and then reviewed, and I haven't run the 40-post relabel. So it supports "I can apply a rule consistently" more than it proves "my 200 labels are consistent."
+
+**Criteria 1 and 2: the model collapses to `wish`.**
+- *Cause:* too few examples of the labels that sit above `wish`, on a task that is hard to learn from 139 training posts. `pitch` has 33 training examples and `spec` has 47, against 59 for `wish`. With no clear signal the model falls back to the largest class: it predicts `wish` for 26 of 30 test posts on seed 42, and `pitch` zero times on all three seeds.
+- *How I know:* the confusion matrix is lopsided (7 `pitch` → `wish`, 0 `wish` → `pitch`; `spec` → `wish` was 6, 9 and 8 across seeds), and accuracy is only 3 to 13 points above always guessing `wish`. A labelling inconsistency would show up as errors in both directions and as disagreements with staff. I see neither.
+- *Contributing factor (a hypothesis, not tested):* `MAX_LENGTH = 128` truncates 38 of 47 `pitch` posts, and the downside or interaction that makes a post a `pitch` tends to come after the mechanics. The model may never see the part that defines the label. Rerunning with a longer limit would test this.
+
+**Criterion 3: `pitch` is a floor problem; `spec` is a variance problem.**
+- *Cause for `pitch`:* the same collapse as above. A `pitch` F1 of exactly 0.000 on three seeds is a model that never predicts the label, not noise.
+- *Cause for `spec`:* only 10 test posts, so one or two calls move F1 a lot (0.571 vs 0.182 is 4 correct vs 1 correct). The spread of 0.390 is mostly small-sample variance on top of the same lean toward `wish`.
+- *Boundary note:* the hardest boundary in my taxonomy is `spec` vs `pitch`, but the model hasn't separated either from `wish`, so this run can't say whether the `spec`/`pitch` rule is learnable. It is a hard pair in my own hard cases, but this data doesn't show it.
+
+**Criterion 5: not diagnosed.** There is nothing to diagnose until I run the relabel. I'm not going to claim consistency from the staff result alone.
+
+**What this means for the fix.** The staff result argues against spending the next step on relabelling. The better first move is on the input and the data: a longer max length, and more `pitch` and `spec` examples if I can get them.
 
 
 
@@ -320,7 +352,9 @@ Fine-tuning beat the baseline (accuracy improved) but the decrease in F1 score f
      data/staff_taxonomy.md, not your own — so every argument below is made
      from those definitions and those decision rules. -->
 
-**Agreement rate:** ___ / 30 = ___%
+**Agreement rate:** 30 / 30 = 100% (`agreement_results.json`: 30 compared, 30 agreed, 0 staff posts missing from my file)
+
+**Disclosure:** `my_staff_labels.csv` was drafted by Claude from `data/staff_taxonomy.md` and its four decision rules, with the post text copied programmatically from `data/staff_posts.csv`.
 
 <!-- Nobody grades this number. A 60% who argues every disagreement from the
      stated rules beats a 95% who wrote "staff was right" nine times. Several
@@ -342,52 +376,66 @@ Fine-tuning beat the baseline (accuracy improved) but the decrease in F1 score f
      written rule two different ways on 30 posts, that is direct evidence about
      what you did across your own 200. -->
 
-**1.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
+None. There were no disagreements to adjudicate, so there is nothing to sort into piles (a), (b) or (c).
 
-**2.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
+The posts where the staff rules were most likely to pull the two labels apart, and which matched staff:
+- **sp_014** ("Times are down about 3% since the shoe rules changed, so obviously the shoes are the whole story"): `hot_take`. This is rule 1's own example; the 3% is decoration on a conclusion already reached.
+- **sp_010** (three runners, same session, within 10 seconds) and **sp_005** (2% gains in the same shoes after a mileage increase): `analysis`. The numbers carry the argument, even though the conclusions are hedged or personal.
+- **sp_029** ("shoes I set every PB in this year are the ones I bought by accident in the wrong size") and **sp_030** ("Signed up. Card's charged…"): `reaction`. Both are about the writer's own experience and feeling, not a general claim (rule 2).
 
 **What the pattern in my disagreements tells me:**
-
-
+There is no pattern, because there were no disagreements. That is evidence that the staff rules, with their decision tests spelled out, can be applied the way their authors applied them. It is weak evidence about my own taxonomy: 30 of 30 on a taxonomy with worked examples for each boundary says little about 200 posts under my `spec`/`pitch` rule, which I wrote myself and which took several rounds to settle. It also doesn't replace the 40-post relabel (criterion 5), which I haven't done. I'm treating it as a reason not to blame labelling inconsistency for the model's collapse to `wish`, not as proof that my labels are consistent.
 
 ---
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** One training setting: `MAX_LENGTH` from 128 to 512 tokens. Nothing else moved: same `labels.csv` (no rows relabelled or added), same model, 3 epochs, learning rate 2e-5, batch size 16, same seeds 42 / 7 / 2024, same CPU. Results are in `results_three_seeds_after.json` (`RUN_LABEL = "after"`), and `takemeter.ipynb` now has `MAX_LENGTH = 512` and `RUN_LABEL = "after"`.
 
-**Which diagnosis pointed at it:**
+**Which diagnosis pointed at it:** The Verdicts and Diagnoses section named the model collapsing to `wish` and never predicting `pitch`, and the agreement report (30 of 30 with staff) argued against a labelling problem. The one concrete hypothesis left was truncation: at 128 tokens, 38 of 47 `pitch` posts were cut, and the downside or interaction that makes a post a `pitch` usually comes after the mechanics. This run tests that hypothesis. Note the setting is not one of the training settings the diagnosis usually points at (epochs, learning rate); it controls how much of each post the model sees.
 
 ### Run Log — After
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.70, and ≥ 15 points above majority baseline (0.433) | 0.667 (+23.3 pts) | 0.633 (+20.0 pts) | 0.633 (+20.0 pts) | MISSED (baseline margin met, 0.70 not) |
+| 2. `wish`/`pitch` confusion | < 5% of predictions | 3/30 = 10.0% | 4/30 = 13.3% | 1/30 = 3.3% | MISSED (met on one seed only) |
+| 3. Per-label F1 | every label ≥ 0.50 | `wish` 0.812, `spec` 0.667, `pitch` 0.000 | `wish` 0.765, `spec` 0.632, `pitch` 0.000 | `wish` 0.828, `spec` 0.583, `pitch` 0.000 | MISSED (`pitch` still 0) |
+| 4. Balance | each ≥ 15%, none > 55% | `wish` 42.5%, `spec` 34.0%, `pitch` 23.5% | same | same | MET |
+| 5. Self-agreement | ≥ 85% on a 40-post relabel | not measured | not measured | not measured | NOT YET MEASURED |
+
+| Measure | Seed 42 | Seed 7 | Seed 2024 | Spread |
+|---|---|---|---|---|
+| Overall accuracy | 0.667 | 0.633 | 0.633 | 0.033 |
+| Macro F1 | 0.493 | 0.465 | 0.470 | 0.028 |
+| F1 — `wish` | 0.812 | 0.765 | 0.828 | 0.063 |
+| F1 — `spec` | 0.667 | 0.632 | 0.583 | 0.084 |
+| F1 — `pitch` | 0.000 | 0.000 | 0.000 | 0.000 |
+
+Confusion matrix (seed 42, after):
+
+| true \ predicted | wish | spec | pitch |
+|---|---|---|---|
+| **wish** | 13 | 0 | 0 |
+| **spec** | 3 | 7 | 0 |
+| **pitch** | 3 | 4 | 0 |
 
 **Did it help, and how do I know:**
+Partly. It helped on `spec` and on stability, but not on the label I was trying to fix.
 
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
+| Measure | Before (42 / 7 / 2024) | After (42 / 7 / 2024) |
+|---|---|---|
+| Overall accuracy | 0.567 / 0.467 / 0.467 | 0.667 / 0.633 / 0.633 |
+| Macro F1 | 0.413 / 0.267 / 0.300 | 0.493 / 0.465 / 0.470 |
+| F1 — `spec` | 0.571 / 0.182 / 0.286 | 0.667 / 0.632 / 0.583 |
+| F1 — `pitch` | 0.000 / 0.000 / 0.000 | 0.000 / 0.000 / 0.000 |
+| Accuracy spread across seeds | 0.100 | 0.033 |
 
-
+- **What got better:** accuracy rose by 0.10, 0.17 and 0.17 on the three seeds, and the margin over always guessing `wish` went from +3 to +13 points to +20 to +23 points. `spec` now clears the 0.50 floor on every seed (before, only seed 42 did). The accuracy spread fell from 0.100 to 0.033, so the numbers are steadier. Criterion 1's baseline-margin condition is now met on all three seeds, though its 0.70 condition is not.
+- **What didn't:** `pitch` F1 is still exactly 0.000 and the model still never predicts `pitch`. Criterion 3 therefore still fails, and criterion 2 is met on only one seed (2024).
+- **What changed in the errors:** the model no longer dumps everything into `wish`. Real `pitch` posts that used to be called `wish` (7, 7, 6) are now split between `wish` (3, 4, 1) and `spec` (4, 3, 6). So the model sees enough of a `pitch` post to tell it is more than a `wish`, but it stops one step short and calls it `spec`. That is the `spec`/`pitch` boundary I named as the hardest one, and it is now what the model is actually getting wrong. It is also a smaller mistake than calling a `pitch` a `wish`, which is what criterion 2 was written to catch.
+- **How sure I am:** moderate. All three seeds move the same direction on accuracy and `spec`, which is more than a friendly draw, but the test set is 30 posts (7 `pitch`, 10 `spec`), so a single post is worth about 3 points of accuracy. This also changed one setting only, but I did not compare against a longer run with a different change, so I can't say 512 is the best value; I only know it is better than 128.
+- **Caveat:** truncation was one explanation among others, and this result supports it without proving it alone. Because `pitch` is still at zero even with the full post visible, truncation was not the whole story. The remaining candidates are the thin `pitch` training set (33 examples) and the difficulty of the `spec`/`pitch` boundary itself.
 
 ---
 
@@ -395,11 +443,20 @@ Fine-tuning beat the baseline (accuracy improved) but the decrease in F1 score f
 
 <!-- For each criterion still missed: what you'd do, and why you stopped. -->
 
+I stopped after one change, as the brief asks, so every fix below is something I would try next, not something I tried.
+
+- **Criterion 1 (accuracy ≥ 0.70 and ≥ 15 points over baseline):** still missed. The baseline-margin half is now met on all three seeds (+20 to +23 points), but accuracy is 0.667 / 0.633 / 0.633, about 3 to 7 points under 0.70. Most of the remaining errors are `pitch` posts (7 of 10 on seed 42), so this is the same problem as criterion 3, not a separate one. If the model got even a few of the 7 test `pitch` posts right, accuracy would clear 0.70.
+- **Criterion 2 (< 5% `wish`/`pitch` confusion):** met on seed 2024 (3.3%) and missed on seeds 42 and 7 (10.0%, 13.3%). I would not call it fixed. The errors on seed 2024 mostly moved to `spec` (6 of 7 `pitch` posts), not to `pitch`, so it passes because the model avoids `wish` for `pitch` posts, not because it recognises them. Every seed needs to hold, so this is a miss.
+- **Criterion 3 (every label F1 ≥ 0.50):** missed only because of `pitch`, which is 0.000 on all six runs (before and after). `wish` (0.77 to 0.83) and `spec` (0.58 to 0.67) now pass. What I'd do next is add `pitch` examples. It has 33 training posts and 7 test posts, and the model has never predicted the label, which a longer input did not change. I would collect about 30 more `pitch` posts labelled with the same rule (a spec that weighs a downside, a failed existing alternative, or an interaction with current mechanics) and check that `pitch` stays under 55% of the data.
+- **Criterion 5 (≥ 85% self-agreement on a 40-post relabel):** not measured. I would relabel 40 random posts without looking at my first labels, and in particular check how I apply the `spec`/`pitch` rule, since that is where the model's errors now sit. The staff agreement result (30 of 30) says I can apply someone else's written rules consistently, but it is not a substitute.
+- **Why I stopped:** the brief asks for one change, and I used it on the diagnosis I had the most direct evidence for. The next steps either need new labelled data (more `pitch` posts) or a measurement I haven't done (the relabel). I also have only 7 `pitch` test posts, so even after those fixes a `pitch` F1 would swing a lot between seeds, and I would need more test data to trust it.
+
 
 
 **The gap between what I meant my labels to capture and what the model
 learned:**
 <!-- Two sentences. Your confusion matrix is the evidence. -->
+I meant `pitch` to mean a spec that weighs a consequence, and `spec` to mean a concrete design with no weighing. The model learned a ladder of length instead: after the longer input it puts all 7 `pitch` posts on seed 42 into `wish` (3) or `spec` (4) and never predicts `pitch`, so it can tell a one-liner from a detailed design but has not picked up the consequence-weighing that separates `pitch` from `spec`.
 
 
 
